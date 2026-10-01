@@ -1,0 +1,22 @@
+@model CourseMatch
+@{ var c = Model.Course; }
+<article class="card @c.Faculty.Css()">
+    <h3>@c.Name</h3>
+    <p class="meta">
+        <span>@c.Field</span>
+        <span>@(c.MinAps is int a ? $"APS {a}+" : "No APS listed")</span>
+        <span>@c.Duration</span>
+        <span>@c.Campus</span>
+    </p>
+    <ul class="checks">
+        @foreach (var k in Model.Checks)
+        {
+            <li class="@(k.Met ? "ok" : "no")">
+                <span class="mark" aria-hidden="true">@(k.Met ? "✓" : "✗")</span>
+                <span><strong>@k.Label</strong> <span class="detail">@k.Detail</span></span>
+            </li>
+        }
+    </ul>
+    @if (!string.IsNullOrEmpty(c.Note)) { <p class="note">@c.Note</p> }
+    @if (!string.IsNullOrEmpty(c.Careers)) { <p class="careers"><strong>Careers:</strong> @c.Careers</p> }
+</article>

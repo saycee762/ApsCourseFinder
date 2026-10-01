@@ -1,0 +1,65 @@
+@model ResultsViewModel
+@{
+    ViewData["Title"] = "Your results";
+    var qualifies = Model.Matches.Where(m => m.Status == MatchStatus.Qualifies).ToList();
+    var almost = Model.Matches.Where(m => m.Status == MatchStatus.Almost).ToList();
+    var notYet = Model.Matches.Where(m => m.Status == MatchStatus.NotYet).ToList();
+}
+
+<section class="score">
+    <div class="aps"><span class="num">@Model.Aps.Total</span> <span>Your APS</span></div>
+    <div>
+        <h1>You qualify for @qualifies.Count of @Model.Matches.Count programmes</h1>
+        <p><a asp-action="Index">Change my marks</a> &middot; <a asp-action="Courses">Browse all courses</a></p>
+    </div>
+</section>
+
+@foreach (var w in Model.Warnings) { <p class="warning">@w</p> }
+
+<details class="panel breakdown">
+    <summary>See how your APS was calculated</summary>
+    <table>
+        <thead><tr><th>Subject</th><th>Mark</th><th>Points</th><th></th></tr></thead>
+        <tbody>
+        @foreach (var l in Model.Aps.Lines)
+        {
+            <tr class="@(l.Counted ? "" : "unused")">
+                <td>@l.Subject</td><td>@l.Mark%</td><td>@l.Points</td>
+                <td>@(l.Counted ? "Counted" : "Not counted (only seven subjects count)")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</details>
+
+<h2>Programmes you qualify for</h2>
+@if (qualifies.Count == 0)
+{
+    <p class="empty">No programmes match yet. Check the "within reach" list below, or browse all courses to see what to aim for.</p>
+}
+@foreach (var group in qualifies.GroupBy(m => m.Course.Faculty))
+{
+    <h3 class="faculty @group.Key.Css()">@group.Key.Title()</h3>
+    <div class="cards">
+        @foreach (var m in group) { <partial name="_CourseCard" model="m" /> }
+    </div>
+}
+
+@if (almost.Count > 0)
+{
+    <h2>Within reach</h2>
+    <p class="sub">You are close on one requirement.</p>
+    <div class="cards">
+        @foreach (var m in almost) { <partial name="_CourseCard" model="m" /> }
+    </div>
+}
+
+@if (notYet.Count > 0)
+{
+    <details class="more">
+        <summary>Programmes you don't qualify for yet (@notYet.Count)</summary>
+        <div class="cards">
+            @foreach (var m in notYet) { <partial name="_CourseCard" model="m" /> }
+        </div>
+    </details>
+}

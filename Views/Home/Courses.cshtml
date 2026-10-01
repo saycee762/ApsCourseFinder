@@ -1,0 +1,50 @@
+@model CourseBrowseViewModel
+@{ ViewData["Title"] = "Browse courses"; }
+
+<section class="intro">
+    <h1>Browse CUT courses</h1>
+    <p>Search by course name, field of study or career, and see the APS, subjects and duration for each.</p>
+</section>
+
+<form method="get" asp-action="Courses" class="panel search">
+    <input type="search" name="q" value="@Model.Query" placeholder="Try nursing, engineer, teacher, IT..." aria-label="Search courses" />
+    <select name="faculty" aria-label="Faculty">
+        <option value="">All faculties</option>
+        @foreach (var f in Enum.GetValues<Faculty>())
+        {
+            <option value="@f" selected="@(Model.Faculty == f)">@f.Title()</option>
+        }
+    </select>
+    <button type="submit" class="primary">Search</button>
+</form>
+
+<p class="sub">@Model.Courses.Count course@(Model.Courses.Count == 1 ? "" : "s") found</p>
+
+<div class="cards">
+    @foreach (var c in Model.Courses)
+    {
+        <article class="card @c.Faculty.Css()">
+            <h3>@c.Name</h3>
+            <p class="meta">
+                <span>@c.Faculty.Title()</span>
+                <span>@(c.MinAps is int a ? $"APS {a}+" : "No APS listed")</span>
+                <span>@c.Duration</span>
+                <span>@c.Campus</span>
+            </p>
+            @if (c.Requirements.Count > 0 || c.AllSubjectsMin.HasValue)
+            {
+                <p class="req-title"><strong>Required subjects</strong></p>
+                <ul class="reqs">
+                    @foreach (var r in c.Requirements) { <li>@r.Describe()</li> }
+                    @if (c.AllSubjectsMin is int all) { <li>@all% or more in every subject</li> }
+                </ul>
+            }
+            else
+            {
+                <p class="req-title">No specific subjects are listed in the guide.</p>
+            }
+            @if (!string.IsNullOrEmpty(c.Note)) { <p class="note">@c.Note</p> }
+            @if (!string.IsNullOrEmpty(c.Careers)) { <p class="careers"><strong>Careers:</strong> @c.Careers</p> }
+        </article>
+    }
+</div>

@@ -1,0 +1,43 @@
+@using Microsoft.AspNetCore.Mvc.ViewFeatures
+@model FinderInput
+@{
+    ViewData["Title"] = "Check my APS";
+    var rows = Model.Marks ?? new List<SubjectMarkInput>();
+}
+
+<section class="intro">
+    <h1>Which CUT programmes can you get into?</h1>
+    <p>Enter your subjects and marks (Grade 11 or Grade 12). We work out your APS and check every CUT programme against it.</p>
+</section>
+
+<div class="two-col">
+    <form method="post" asp-action="Index" class="panel" novalidate>
+        <div asp-validation-summary="All" class="errors"></div>
+
+        <div id="mark-list">
+            @for (var i = 0; i < rows.Count; i++)
+            {
+                @await Html.PartialAsync("_MarkRow", rows[i], new ViewDataDictionary(ViewData) { { "i", i } })
+            }
+        </div>
+
+        <template id="row-template">
+            @await Html.PartialAsync("_MarkRow", new SubjectMarkInput(), new ViewDataDictionary(ViewData) { { "i", "__i__" } })
+        </template>
+
+        <div class="actions">
+            <button type="button" id="add-row" class="secondary">Add another subject</button>
+            <button type="submit" class="primary">Calculate my APS</button>
+        </div>
+    </form>
+
+    <aside class="panel how">
+        <h2>How your APS is worked out</h2>
+        <table class="levels">
+            <tr><th>Mark</th><td>80-100</td><td>70-79</td><td>60-69</td><td>50-59</td><td>40-49</td><td>30-39</td><td>0-29</td></tr>
+            <tr><th>Points</th><td>7</td><td>6</td><td>5</td><td>4</td><td>3</td><td>2</td><td>1</td></tr>
+        </table>
+        <p>CUT counts seven subjects: your best six plus Life Orientation, which counts as 1 point.</p>
+        <p>Nothing you type here is saved.</p>
+    </aside>
+</div>

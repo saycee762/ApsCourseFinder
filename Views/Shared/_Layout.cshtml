@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - CUT APS Portal</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="top">
+        <a class="brand" asp-controller="Home" asp-action="Index">CUT APS Portal</a>
+        <nav>
+            <a asp-controller="Home" asp-action="Index">Check my APS</a>
+            <a asp-controller="Home" asp-action="Courses">Browse courses</a>
+        </nav>
+    </header>
+    <main>@RenderBody()</main>
+    <footer>
+        Based on the CUT Subject Selection Guide 2023. This portal is a guide only and does not store your marks.
+        Always confirm requirements with CUT admissions before you apply.
+    </footer>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+</html>

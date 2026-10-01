@@ -1,0 +1,18 @@
+@model SubjectMarkInput
+@{ var i = ViewData["i"]; }
+<div class="mark-row">
+    <select name="Marks[@i].Subject" aria-label="Subject">
+        <option value="">Choose a subject</option>
+        @foreach (var (group, items) in Subjects.Groups)
+        {
+            <optgroup label="@group">
+                @foreach (var s in items)
+                {
+                    <option value="@s" selected="@(s == Model.Subject)">@s</option>
+                }
+            </optgroup>
+        }
+    </select>
+    <input type="number" name="Marks[@i].Mark" value="@Model.Mark" min="0" max="100" inputmode="numeric" placeholder="Mark %" aria-label="Mark in percent" />
+    <button type="button" class="remove" aria-label="Remove this subject">&times;</button>
+</div>
